@@ -29,7 +29,7 @@ FALSE		false
 RETURN		return
 MAIN		main
 NUMBER   	[0-9]
-IDENTIFIER	[a-zA-z]+[a-zA-Z0-9_]*[a-zA-Z0-9]|[a-zA-Z]
+IDENTIFIER	[a-zA-Z]+[a-zA-Z0-9_]*[a-zA-Z0-9]|[a-zA-Z]
 SEMICOLON	;
 COLON		:
 COMMA		,
@@ -80,7 +80,7 @@ COMMENT		##.*
 {TRUE}		printf("TRUE \n");
 {FALSE}		printf("FALSE \n");
 {RETURN}	printf("RETURN \n");
-{NUMBER}+        printf("DIGIT \n");                     //num
+{NUMBER}+       printf("NUMBER %s \n", yytext);                     //num
 {L_PAREN}       printf("L_PAREN \n");                   //(
 {R_PAREN}       printf("R_PAREN \n");                   //)
 {EQUAL}         printf("EQUAL \n");                     //=
@@ -89,22 +89,22 @@ COMMENT		##.*
 {MULT}          printf("MULT \n");
 {DIV}           printf("DIV \n");
 
-{MOD}	printf("MOD\n");	//Mod operator
+{MOD}		printf("MOD\n");	//Mod operator
 
-{NEQ}   printf("NEQ\n");	//not equal
-{LTE}	printf("LTE\n");	//less than or equal to
-{GTE}	printf("GTE\n");	//greater than or equal to
-{LT}	printf("LT\n");		//less than
-{GT}	printf("GT\n");		//greater than
+{NEQ}   	printf("NEQ\n");	//not equal
+{LTE}		printf("LTE\n");	//less than or equal to
+{GTE}		printf("GTE\n");	//greater than or equal to
+{LT}		printf("LT\n");		//less than
+{GT}		printf("GT\n");		//greater than
 {SEMICOLON}	printf("SEMICOLON\n");	//semicolon
 {COLON}		printf("COLON\n");	//colon
 {COMMA}		printf("COMMA\n");	//comma
 
-{LSQBRACKET}	printf("L_SQUARE_BRACKET\n");	//left square bracket
-{RSBRACKET}	printf("R_SQUARE-BRACKET\n");	//right square bracket
+{LSQBRACKET}	printf("L_BRACKET\n");	//left square bracket
+{RSBRACKET}	printf("R_BRACKET\n");	//right square bracket
 {ASSIGN}	printf("ASSIGN\n");		//assign statement
 {COMMENT}
-{IDENTIFIER}	printf("IDENTIFIER\n");  
+{IDENTIFIER}	printf("IDENTIFIER %s \n", yytext);  
 "{"[\^{}}\n]*"}"`
 [ \t\n]+
 .               printf("unrecognized charachter!\n");
@@ -120,3 +120,5 @@ int main(int argc, char **argv) {
         yylex();
         return 0;
 }
+
+
