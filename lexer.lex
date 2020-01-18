@@ -55,7 +55,7 @@ COMMENT		##.*
 {FUNCTION}	printf("FUNCTION \n");
 {BEGIN_PARAMS}	printf("BEGIN_PARAMS \n");
 {END_PARAMS}	printf("END_PARAMS \n");
-{BEGIN_LOCALS}	printf("BEGIN_LOCALSA \n");
+{BEGIN_LOCALS}	printf("BEGIN_LOCALS \n");
 {END_LOCALS}	printf("END_LOCALS \n");
 {BEGIN_BODY}	printf("BEGIN_BODY \n");
 {END_BODY}	printf("END_BODY \n");
@@ -100,8 +100,8 @@ COMMENT		##.*
 {COLON}		printf("COLON\n");	//colon
 {COMMA}		printf("COMMA\n");	//comma
 
-{LSQBRACKET}	printf("L_BRACKET\n");	//left square bracket
-{RSBRACKET}	printf("R_BRACKET\n");	//right square bracket
+{LSQBRACKET}	printf("L_SQUARE_BRACKET\n");	//left square bracket
+{RSBRACKET}	printf("R_SQUARE_BRACKET\n");	//right square bracket
 {ASSIGN}	printf("ASSIGN\n");		//assign statement
 {COMMENT}
 {IDENTIFIER}	printf("IDENTIFIER %s \n", yytext);  
