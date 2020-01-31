@@ -1,4 +1,10 @@
 
+
+%{
+	int line = 1;
+	int col = 1;
+%}
+
 FUNCTION	function
 BEGIN_PARAMS	beginparams
 END_PARAMS	endparams
@@ -49,65 +55,70 @@ GTE		>=
 LSQBRACKET	\[
 RSBRACKET	\]
 ASSIGN		:=
+NUM_FIRST_ERROR		[0-9]+_*[a-zA-Z]+[a-zA-Z0-9_]*[a-zA-Z0-9]*
+UNDERSCORE_ERROR	[a-zA-Z][a-zA-Z0-9_]*_
 COMMENT		##.*
 
 %%
-{FUNCTION}	printf("FUNCTION \n");
-{BEGIN_PARAMS}	printf("BEGIN_PARAMS \n");
-{END_PARAMS}	printf("END_PARAMS \n");
-{BEGIN_LOCALS}	printf("BEGIN_LOCALS \n");
-{END_LOCALS}	printf("END_LOCALS \n");
-{BEGIN_BODY}	printf("BEGIN_BODY \n");
-{END_BODY}	printf("END_BODY \n");
-{INTEGER}	printf("INTEGER \n");
-{ARRAY}		printf("ARRAY \n");
-{OF}		printf("OF \n");
-{IF}            printf("IF \n");
-{THEN}          printf("THEN \n");
-{ENDIF}		printf("ENDIF \n");
-{ELSE}		printf("ELSE \n"); 
-{WHILE}		printf("WHILE \n"); 
-{DO}		printf("DO \n"); 
-{FOR}		printf("FOR \n"); 
-{BEGINLOOP}	printf("BEGINLOOP \n"); 
-{ENDLOOP}	printf("ENDLOOP \n"); 
-{CONTINUE}	printf("CONTINUE \n");
-{READ}		printf("READ \n");
-{WRITE}		printf("WRITE \n");
-{AND}		printf("AND \n");
-{OR}		printf("OR \n");
-{NOT}		printf("NOT \n");
-{TRUE}		printf("TRUE \n");
-{FALSE}		printf("FALSE \n");
-{RETURN}	printf("RETURN \n");
-{NUMBER}+       printf("NUMBER %s \n", yytext);                     //num
-{L_PAREN}       printf("L_PAREN \n");                   //(
-{R_PAREN}       printf("R_PAREN \n");                   //)
-{EQUAL}         printf("EQUAL \n");                     //=
-{PLUS}          printf("PLUS \n");                      //+
-{MINUS}         printf("MINUS \n");                     //-
-{MULT}          printf("MULT \n");
-{DIV}           printf("DIV \n");
+{FUNCTION}	{printf("FUNCTION \n"); col += yyleng; };
+{BEGIN_PARAMS}	{printf("BEGIN_PARAMS \n"); col += yyleng; };
+{END_PARAMS}	{printf("END_PARAMS \n"); col += yyleng; };
+{BEGIN_LOCALS}	{printf("BEGIN_LOCALS \n"); col += yyleng; };
+{END_LOCALS}	{printf("END_LOCALS \n"); col += yyleng; };
+{BEGIN_BODY}	{printf("BEGIN_BODY \n"); col+= yyleng; };
+{END_BODY}	{printf("END_BODY \n"); col+= yyleng;};
+{INTEGER}	{printf("INTEGER \n"); col+= yyleng; };
+{ARRAY}		{printf("ARRAY \n"); col+= yyleng; };
+{OF}		{printf("OF \n"); col+= yyleng; };
+{IF}            {printf("IF \n"); col+= yyleng; };
+{THEN}          {printf("THEN \n"); col+= yyleng; };
+{ENDIF}		{printf("ENDIF \n"); col+= yyleng; };
+{ELSE}		{printf("ELSE \n"); col+= yyleng; }; 
+{WHILE}		{printf("WHILE \n"); col+= yyleng; }; 
+{DO}		{printf("DO \n"); col+= yyleng; }; 
+{FOR}		{printf("FOR \n"); col+= yyleng; }; 
+{BEGINLOOP}	{printf("BEGINLOOP \n"); col+= yyleng; }; 
+{ENDLOOP}	{printf("ENDLOOP \n"); col+= yyleng; }; 
+{CONTINUE}	{printf("CONTINUE \n"); col+= yyleng; };
+{READ}		{printf("READ \n"); col+= yyleng; };
+{WRITE}		{printf("WRITE \n"); col+= yyleng; };
+{AND}		{printf("AND \n"); col+= yyleng; };
+{OR}		{printf("OR \n"); col+= yyleng; };
+{NOT}		{printf("NOT \n"); col+= yyleng; };
+{TRUE}		{printf("TRUE \n"); col+= yyleng; };
+{FALSE}		{printf("FALSE \n"); col+= yyleng; };
+{RETURN}	{printf("RETURN \n"); col+= yyleng; };
+{L_PAREN}       {printf("L_PAREN \n"); col+= yyleng; };                   //(
+{R_PAREN}       {printf("R_PAREN \n"); col+= yyleng; };                   //)
+{EQUAL}         {printf("EQUAL \n"); col+= yyleng; };                     //=
+{PLUS}          {printf("PLUS \n"); col+= yyleng; };                      //+
+{MINUS}         {printf("MINUS \n"); col+= yyleng; };                     //-
+{MULT}          {printf("MULT \n"); col+= yyleng; };
+{DIV}           {printf("DIV \n"); col+= yyleng; };
 
-{MOD}		printf("MOD\n");	//Mod operator
+{MOD}		{printf("MOD\n"); col+= yyleng; };	//Mod operator
 
-{NEQ}   	printf("NEQ\n");	//not equal
-{LTE}		printf("LTE\n");	//less than or equal to
-{GTE}		printf("GTE\n");	//greater than or equal to
-{LT}		printf("LT\n");		//less than
-{GT}		printf("GT\n");		//greater than
-{SEMICOLON}	printf("SEMICOLON\n");	//semicolon
-{COLON}		printf("COLON\n");	//colon
-{COMMA}		printf("COMMA\n");	//comma
+{NEQ}   	{printf("NEQ\n"); col+= yyleng; };	//not equal
+{LTE}		{printf("LTE\n"); col+= yyleng; };	//less than or equal to
+{GTE}		{printf("GTE\n"); col+= yyleng; };	//greater than or equal to
+{LT}		{printf("LT\n"); col+= yyleng; };		//less than
+{GT}		{printf("GT\n"); col+= yyleng; };		//greater than
+{SEMICOLON}	{printf("SEMICOLON\n"); col+= yyleng; };	//semicolon
+{COLON}		{printf("COLON\n"); col+= yyleng; };	//colon
+{COMMA}		{printf("COMMA\n"); col+= yyleng; };	//comma
 
-{LSQBRACKET}	printf("L_SQUARE_BRACKET\n");	//left square bracket
-{RSBRACKET}	printf("R_SQUARE_BRACKET\n");	//right square bracket
-{ASSIGN}	printf("ASSIGN\n");		//assign statement
-{COMMENT}
-{IDENTIFIER}	printf("IDENTIFIER %s \n", yytext);  
-"{"[\^{}}\n]*"}"`
-[ \t\n]+
-.               printf("unrecognized charachter!\n");
+{LSQBRACKET}	{printf("L_SQUARE_BRACKET\n"); col+= yyleng; };	//left square bracket
+{RSBRACKET}	{printf("R_SQUARE_BRACKET\n"); col+= yyleng; };	//right square bracket
+{ASSIGN}	{printf("ASSIGN\n"); col+= yyleng; };		//assign statement
+{COMMENT}		
+{NUM_FIRST_ERROR}	{printf("error at line %d, column %d: identifier \"%s\" must begin with a letter \n", line, col, yytext); col+= yyleng; };
+{UNDERSCORE_ERROR}      {printf("error at line %d, column %d: identifier \"%s\" must not end with an underscore \n", line, col, yytext); col += yyleng; };
+{IDENTIFIER}		{printf("IDENTIFIER %s \n", yytext);}  
+{NUMBER}+       	{printf("NUMBER %s \n", yytext); col+= yyleng; };
+"{"[\^{}}\n]*"}"`	{col++;};
+[ \t]+		{col++;}
+[\n]+		{line++; col = 1;};
+.               {printf("error at line %d, column %d: unknown input \"%s\"  \n", line, col, yytext); col+= yyleng; };
 
 %%
 
