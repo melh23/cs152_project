@@ -9,4 +9,4 @@ make <br/>
 ./parser <filename.min>
 
 compile bison <br/>
-bison -v -d --file-prefix=y mini_l.y.
+bison -v -d --file-prefix=y parser.y.
