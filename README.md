@@ -8,5 +8,5 @@ gcc lexer.c -lfl -o lexer
 make <br/>
 ./parser <filename.min>
 
-make <br/>
+compile bison <br/>
 bison -v -d --file-prefix=y mini_l.y.
