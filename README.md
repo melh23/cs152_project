@@ -1,7 +1,10 @@
 # cs152_project
 
-flex commands:
-
-flex -o lexer.c lexer.lex
-
+##Flex commands:  
+flex -o lexer.c lexer.lex 
 gcc lexer.c -lfl -o lexer
+
+##Bison commands:
+make
+./parser <filename.min>
+
