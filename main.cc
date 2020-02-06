@@ -1,4 +1,5 @@
 #include <iostream>
+#include "heading.h"
 
 int yyparse();
 
