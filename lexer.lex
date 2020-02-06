@@ -3,6 +3,7 @@
 %{
 	int line = 1;
 	int col = 1;
+	#include "parser.h"
 %}
 
 FUNCTION	function
@@ -60,76 +61,67 @@ UNDERSCORE_ERROR	[a-zA-Z][a-zA-Z0-9_]*_
 COMMENT		##.*
 
 %%
-{FUNCTION}	{printf("FUNCTION \n"); col += yyleng; };
-{BEGIN_PARAMS}	{printf("BEGIN_PARAMS \n"); col += yyleng; };
-{END_PARAMS}	{printf("END_PARAMS \n"); col += yyleng; };
-{BEGIN_LOCALS}	{printf("BEGIN_LOCALS \n"); col += yyleng; };
-{END_LOCALS}	{printf("END_LOCALS \n"); col += yyleng; };
-{BEGIN_BODY}	{printf("BEGIN_BODY \n"); col+= yyleng; };
-{END_BODY}	{printf("END_BODY \n"); col+= yyleng;};
-{INTEGER}	{printf("INTEGER \n"); col+= yyleng; };
-{ARRAY}		{printf("ARRAY \n"); col+= yyleng; };
-{OF}		{printf("OF \n"); col+= yyleng; };
-{IF}            {printf("IF \n"); col+= yyleng; };
-{THEN}          {printf("THEN \n"); col+= yyleng; };
-{ENDIF}		{printf("ENDIF \n"); col+= yyleng; };
-{ELSE}		{printf("ELSE \n"); col+= yyleng; }; 
-{WHILE}		{printf("WHILE \n"); col+= yyleng; }; 
-{DO}		{printf("DO \n"); col+= yyleng; }; 
-{FOR}		{printf("FOR \n"); col+= yyleng; }; 
-{BEGINLOOP}	{printf("BEGINLOOP \n"); col+= yyleng; }; 
-{ENDLOOP}	{printf("ENDLOOP \n"); col+= yyleng; }; 
-{CONTINUE}	{printf("CONTINUE \n"); col+= yyleng; };
-{READ}		{printf("READ \n"); col+= yyleng; };
-{WRITE}		{printf("WRITE \n"); col+= yyleng; };
-{AND}		{printf("AND \n"); col+= yyleng; };
-{OR}		{printf("OR \n"); col+= yyleng; };
-{NOT}		{printf("NOT \n"); col+= yyleng; };
-{TRUE}		{printf("TRUE \n"); col+= yyleng; };
-{FALSE}		{printf("FALSE \n"); col+= yyleng; };
-{RETURN}	{printf("RETURN \n"); col+= yyleng; };
-{L_PAREN}       {printf("L_PAREN \n"); col+= yyleng; };                   //(
-{R_PAREN}       {printf("R_PAREN \n"); col+= yyleng; };                   //)
-{EQUAL}         {printf("EQUAL \n"); col+= yyleng; };                     //=
-{PLUS}          {printf("PLUS \n"); col+= yyleng; };                      //+
-{MINUS}         {printf("MINUS \n"); col+= yyleng; };                     //-
-{MULT}          {printf("MULT \n"); col+= yyleng; };
-{DIV}           {printf("DIV \n"); col+= yyleng; };
+{FUNCTION}	{ col += yyleng; return FUNCTION; };
+{BEGIN_PARAMS}	{ col += yyleng; return BEGIN_PARAMS; };
+{END_PARAMS}	{ col += yyleng; return END_PARAMS; };
+{BEGIN_LOCALS}	{ col += yyleng; return BEGIN_LOCALS; };
+{END_LOCALS}	{ col += yyleng; return END_LOCALS; };
+{BEGIN_BODY}	{ col += yyleng; return BEGIN_BODY; };
+{END_BODY}	{ col += yyleng; return END_BODY; };
+{INTEGER}	{ col += yyleng; return INTEGER; };
+{ARRAY}		{ col += yyleng; return ARRAY; };
+{OF}		{ col += yyleng; return OF; };
+{IF}            { col += yyleng; return IF;};
+{THEN}          { col += yyleng; return THEN; };
+{ENDIF}		{ col += yyleng; return ENDIF; };
+{ELSE}		{ col += yyleng; return ELSE; }; 
+{WHILE}		{ col += yyleng; return WHILE; }; 
+{DO}		{ col += yyleng; return DO; }; 
+{FOR}		{ col += yyleng; return FOR; }; 
+{BEGINLOOP}	{ col += yyleng; return BEGINLOOP; }; 
+{ENDLOOP}	{ col += yyleng; return ENDLOOP; }; 
+{CONTINUE}	{ col += yyleng; return CONTINUE; };
+{READ}		{ col += yyleng; return READ; };
+{WRITE}		{ col += yyleng; return WRITE; };
+{AND}		{ col += yyleng; return AND; };
+{OR}		{ col += yyleng; return OR; };
+{NOT}		{ col += yyleng; return NOT; };
+{TRUE}		{ col += yyleng; return TRUE; };
+{FALSE}		{ col += yyleng; return FALSE; };
+{RETURN}	{ col += yyleng; return RETURN; };
+{L_PAREN}       { col += yyleng; return L_PAREN; };                   //(
+{R_PAREN}       { col += yyleng; return R_PAREN; };                   //)
+{EQUAL}         { col += yyleng; return EQUAL; };                     //=
+{PLUS}          { col += yyleng; return PLUS; };                      //+
+{MINUS}         { col += yyleng; return MINUS; };                     //-
+{MULT}          { col += yyleng; return MULT; };
+{DIV}           { col += yyleng; return DIV; };
 
-{MOD}		{printf("MOD\n"); col+= yyleng; };	//Mod operator
+{MOD}		{ col += yyleng; return MOD; };	//Mod operator
 
-{NEQ}   	{printf("NEQ\n"); col+= yyleng; };	//not equal
-{LTE}		{printf("LTE\n"); col+= yyleng; };	//less than or equal to
-{GTE}		{printf("GTE\n"); col+= yyleng; };	//greater than or equal to
-{LT}		{printf("LT\n"); col+= yyleng; };		//less than
-{GT}		{printf("GT\n"); col+= yyleng; };		//greater than
-{SEMICOLON}	{printf("SEMICOLON\n"); col+= yyleng; };	//semicolon
-{COLON}		{printf("COLON\n"); col+= yyleng; };	//colon
-{COMMA}		{printf("COMMA\n"); col+= yyleng; };	//comma
+{NEQ}   	{ col += yyleng; return NEQ; };	//not equal
+{LTE}		{ col += yyleng; return LTE; };	//less than or equal to
+{GTE}		{ col += yyleng; return GTE; };	//greater than or equal to
+{LT}		{ col += yyleng; return LT; };		//less than
+{GT}		{ col += yyleng; return GT; };		//greater than
+{SEMICOLON}	{ col += yyleng; return SEMICOLON; };	//semicolon
+{COLON}		{ col += yyleng; return COLON; };	//colon
+{COMMA}		{ col += yyleng; return COMMA; };	//comma
 
-{LSQBRACKET}	{printf("L_SQUARE_BRACKET\n"); col+= yyleng; };	//left square bracket
-{RSBRACKET}	{printf("R_SQUARE_BRACKET\n"); col+= yyleng; };	//right square bracket
-{ASSIGN}	{printf("ASSIGN\n"); col+= yyleng; };		//assign statement
+{LSQBRACKET}	{ col += yyleng; return LSQBRACKET; };	//left square bracket
+{RSBRACKET}	{ col += yyleng; return RSBRACKET; };	//right square bracket
+{ASSIGN}	{ col += yyleng; return ASSIGN; };		//assign statement
 {COMMENT}		
-{NUM_FIRST_ERROR}	{printf("error at line %d, column %d: identifier \"%s\" must begin with a letter \n", line, col, yytext); col+= yyleng; };
-{UNDERSCORE_ERROR}      {printf("error at line %d, column %d: identifier \"%s\" must not end with an underscore \n", line, col, yytext); col += yyleng; };
-{IDENTIFIER}		{printf("IDENTIFIER %s \n", yytext);}  
-{NUMBER}+       	{printf("NUMBER %s \n", yytext); col+= yyleng; };
+{NUM_FIRST_ERROR}	{ col+= yyleng; return NUM_FIRST_ERROR; };
+{UNDERSCORE_ERROR}      { col += yyleng; return UNDERSCORE_ERROR; };
+{IDENTIFIER}		{ yylval.dval = strdup(yytext); return IDENTIFIER; }  
+{NUMBER}+       	{ col+= yyleng; yyval.dval = strdup(yytext); return NUMBER; };
 "{"[\^{}}\n]*"}"`	{col++;};
-[ \t]+		{col++;}
-[\n]+		{line++; col = 1;};
-.               {printf("error at line %d, column %d: unknown input \"%s\"  \n", line, col, yytext); col+= yyleng; };
+[ \t]+		{ col++;}
+[\n]+		{ line++; col = 1; return END; };
+.               { col+= yyleng; return UNEXPECTED_ERROR; };
 
 %%
 
-int main(int argc, char **argv) {
-        ++argv, --argc; /* skip over program name */
-        if ( argc > 0 )
-                yyin = fopen( argv[0], "r" );
-        else
-                yyin = stdin;
-        yylex();
-        return 0;
-}
 
 
