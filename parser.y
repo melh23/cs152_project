@@ -8,57 +8,59 @@ int yylex(void);
 %}
 
 %union{
-  int		int_val;
-  string*	op_val;
+  int		dval;
+  string*	tag;
 }
 
-/*%start	input 
+/*%start	input */
 
 %token	<int_val>	INTEGER_LITERAL		/* %token: used to declare token/type name without associativity/precedence. Is also a type tag.*/
 
-%token	<tag>	FUNCTION BEGIN_PARAMS END_PARAMS BEGIN_LOCALS END_LOCALS BEGIN_BODY END_BODY OF ARRAY
-%token	<tag>	IF THEN ENDIF ELSE WHILE DO FOR BEGINLOOP ENDLOOP CONTINUE READ WRITE AND OR NOT 
-%token	<tag>	TRUE FALSE RETURN MAIN INTEGER SEMICOLON COLON COMMA PLUS MINUS MULT DIV MOD
-%token	<tag>	L_PAREN R_PAREN EQUAL NEQ LT GT LTE GTE LSQBRACKET RSQBRACKET ASSIGN 
-%token	<tag>	NUM_FIRST_ERROR UNDERSCORE_ERROR UNEXPECETED_ERROR END
-%token 	<dval> 	NUMBER IDENTIFIER
-/*%token	<tag>	program function declaration statement bool_expr relation_and_expression relation_expression comp exp multipl_expr term var*/
+%start	program
 
-%type  	<tag>	program
-%type  	<tag>	function
-%type	<tag>	declaration
-%type	<tag>	statement
-%type	<tag>	bool_expr
-%type	<tag>	relation_and_expression
-%type	<tag>	relation_expr
-%type	<tag>	comp
-%type	<tag>	exp
-%type	<tag>	multipl_expr
-%type	<tag>	term
-%type	<tag>	var
+%token	FUNCTION BEGIN_PARAMS END_PARAMS BEGIN_LOCALS END_LOCALS BEGIN_BODY END_BODY OF ARRAY
+%token	IF THEN ENDIF ELSE WHILE DO FOR BEGINLOOP ENDLOOP CONTINUE READ WRITE AND OR NOT 
+%token	TRUE FALSE RETURN MAIN INTEGER SEMICOLON COLON COMMA PLUS MINUS MULT DIV MOD
+%token	L_PAREN R_PAREN EQUAL NEQ LT GT LTE GTE LSQBRACKET RSQBRACKET ASSIGN 
+%token	NUM_FIRST_ERROR UNDERSCORE_ERROR UNEXPECETED_ERROR END 
+
+%token	<tag>	IDENTIFIER
+%token 	<dval> 	NUMBER
+/*%token	<tag>	program function declaration statement bool_expr relation_and_expression relation_expression comp exp multipl_expr term var*/
+/*
+%type  	program
+%type  	function
+%type	declaration
+%type	statement
+%type	bool_expr
+%type	relation_and_expression
+%type	relation_expr
+%type	comp
+%type	exp
+%type	multipl_expr
+%type	term
+%type	var
 /*%type	exp			/* %type: When using %union to specify multiple value types, declare value type for each nonterminal symbol*/
 /*%left	PLUS*/					/* %left: denotes a left associatve operator*/
 /*%left	MULT*/
-
+%type	<dval>	multipl_expr
+%type	<dval>	exp 
+%type 	<tag>	var term
 
 %%
 
-program:	function;
-
-function:	FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS declaration SEMICOLON END_PARAMS 
-		BEGIN_LOCALS declaration SEMICOLON END_LOCALS
-		BEGIN_BODY statement SEMICOLON END_BODY
+program:	/*empty*/
+		| function 
 		;
 
-multipl_expr:	term
-		| term MULT multipl_expr
-		| term DIV multipl_expr
-		| term MOD multipl_expr
+function:	FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS declaration SEMICOLON END_PARAMS 
+		| BEGIN_LOCALS declaration SEMICOLON END_LOCALS
+		| BEGIN_BODY statement SEMICOLON END_BODY
 		;
 
 declaration:    IDENTIFIER COMMA declaration
                 | IDENTIFIER SEMICOLON INTEGER
-                | IDENTIFIER SEMICOLON ARRAY LSQBRACKET NUMBER RSQBRACKET
+                | IDENTIFIER SEMICOLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER
                 ;
 
 
@@ -95,27 +97,28 @@ comp:           EQUAL
 		| GTE
 		;
 
-exp:		multipl_expr
-		| multipl_expr PLUS multipl_expr
-		| multipl_expr MINUS multipl_expr
+exp:		multipl_expr {$$ = $$;}
+		| multipl_expr PLUS multipl_expr {$$ = $1 + $3;}
+		| multipl_expr MINUS multipl_expr {$$ = $1 - $3;}
 		;
 
-multipl_expr:	term MULT term
-		| term DIV term
-		| term MOD term
+multipl_expr:	term {$$ = $1;}
+		| term MULT term {$$ = $1 * $3;}
+		| term DIV term {$$ = $1 / $3;}
+		| term MOD term {$$ = $1 % $3;}
 		;
 
-term:		MINUS var
-		| var
-		| MINUS NUMBER
-		| NUMBER
-		| MINUS L_PAREN exp R_PAREN
-		| L_PAREN exp R_PAREN
-		| IDENTIFIER L_PAREN exp R_PAREN
+term:		MINUS var {$$ = $2;}	/* do we need to make a variable lookup table? Didn't the prof. say something about that in class? Can't remember... */
+		| var {$$ = $1;}
+		| MINUS NUMBER {$$ = $2;}
+		| NUMBER {$$ = $1;}
+		| MINUS L_PAREN exp R_PAREN {$$ = $3;}
+		| L_PAREN exp R_PAREN {$$ = $2;}
+		| IDENTIFIER L_PAREN exp R_PAREN {$$ = $3;}
 		;
 
-var:		IDENTIFIER
-		| IDENTIFIER LSQBRACKET exp RSQBRACKET
+var:		IDENTIFIER {$$ = $1;}
+		| IDENTIFIER LSQBRACKET exp RSQBRACKET {$$ = $1;}
 		;
 
 
