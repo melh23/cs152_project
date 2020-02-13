@@ -53,16 +53,26 @@ program:	/*empty*/
 		| function 
 		;
 
-function:	FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS declaration SEMICOLON END_PARAMS 
-		| BEGIN_LOCALS declaration SEMICOLON END_LOCALS
-		| BEGIN_BODY statement SEMICOLON END_BODY
+function:	FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS fxn_dec END_PARAMS 
+		BEGIN_LOCALS fxn_dec END_LOCALS
+		BEGIN_BODY statement SEMICOLON fxn_statem END_BODY
 		;
 
-declaration:    IDENTIFIER COMMA declaration
-                | IDENTIFIER SEMICOLON INTEGER
-                | IDENTIFIER SEMICOLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER
+fxn_dec:	/*empty*/
+		| declaration SEMICOLON fxn_dec
+		;
+
+fxn_statem:	/*empty*/
+		| statement SEMICOLON fxn_statem
+		;
+
+declaration:    IDENTIFIER dec_comma SEMICOLON INTEGER
+                | IDENTIFIER dec_comma SEMICOLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER
                 ;
 
+dec_comma:	/*empty*/
+		| COMMA IDENTIFIER dec_comma
+		;
 
 statement:	var ASSIGN exp
 		| IF bool_expr THEN statement SEMICOLON ENDIF
@@ -82,12 +92,15 @@ relation_and_expression:        relation_expr
                                 | relation_expr AND relation_expr
                                 ;
 
-relation_expr:  NOT relation_expr
-                | exp comp exp
-                | TRUE
-                | FALSE
-                | L_PAREN bool_expr R_PAREN
+relation_expr:  NOT rel_exp_not
+                | rel_exp_not
                 ;
+
+rel_exp_not:	exp comp exp
+		| TRUE
+		| FALSE
+		| L_PAREN bool_expr R_PAREN
+		;
 
 comp:           EQUAL 
 		| NEQ 
@@ -108,13 +121,22 @@ multipl_expr:	term {$$ = $1;}
 		| term MOD term {$$ = $1 % $3;}
 		;
 
-term:		MINUS var {$$ = $2;}	/* do we need to make a variable lookup table? Didn't the prof. say something about that in class? Can't remember... */
-		| var {$$ = $1;}
-		| MINUS NUMBER {$$ = $2;}
-		| NUMBER {$$ = $1;}
-		| MINUS L_PAREN exp R_PAREN {$$ = $3;}
-		| L_PAREN exp R_PAREN {$$ = $2;}
-		| IDENTIFIER L_PAREN exp R_PAREN {$$ = $3;}
+term:		MINUS term_minus
+		| term_minus
+		| IDENTIFIER L_PAREN term_exp R_PAREN
+		;
+
+term_minus:	var
+		| NUMBER
+		| L_PAREN exp R_PAREN
+		;
+
+term_exp:	/*empty*/
+		| exp term_expr term_exp
+		;
+
+term_expr:	/*empty*/
+		| COMMA exp
 		;
 
 var:		IDENTIFIER {$$ = $1;}
