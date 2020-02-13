@@ -75,13 +75,28 @@ dec_comma:	/*empty*/
 		;
 
 statement:	var ASSIGN exp
-		| IF bool_expr THEN statement SEMICOLON ENDIF
-		| WHILE bool_expr BEGINLOOP statement SEMICOLON ENDLOOP
-		| DO BEGINLOOP statement SEMICOLON ENDLOOP WHILE bool_expr
-		| FOR var ASSIGN NUMBER SEMICOLON bool_expr SEMICOLON var ASSIGN exp BEGINLOOP statement SEMICOLON ENDLOOP
-		| READ var
+		| IF bool_expr THEN statm_else ENDIF
+		| WHILE bool_expr BEGINLOOP statm_loop ENDLOOP
+		| DO BEGINLOOP statm_loop ENDLOOP WHILE bool_expr
+		| FOR var ASSIGN NUMBER SEMICOLON bool_expr SEMICOLON var ASSIGN exp BEGINLOOP statm_loop ENDLOOP
+		| READ var statm_var
+		| WRITE var statm_var
 		| CONTINUE
 		| RETURN exp
+		;
+
+statm_else:	ELSE statm_loop
+		| statm_base
+		;
+
+statm_loop:	statm_base
+		| statm_base statm_loop
+		;
+
+statm_base:	statement SEMICOLON;
+
+statm_var:	/*empty*/
+		| COMMA var
 		;
 
 bool_expr:      relation_and_expression
