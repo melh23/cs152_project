@@ -10,3 +10,8 @@ make <br/>
 
 compile bison <br/>
 bison -v -d --file-prefix=y parser.y.
+
+
+
+##compile
+g++ lexer.c main.cc bison.c parser.tab.c -lfl -o lexer
