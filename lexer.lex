@@ -3,7 +3,8 @@
 %{
 	int line = 1;
 	int col = 1;
-	#include "parser.h"
+	#include "heading.h"
+	#include "tok.h"
 %}
 
 FUNCTION	function
@@ -54,11 +55,12 @@ GT		>
 LTE		<=
 GTE		>=
 LSQBRACKET	\[
-RSBRACKET	\]
+RSQBRACKET	\]
 ASSIGN		:=
 NUM_FIRST_ERROR		[0-9]+_*[a-zA-Z]+[a-zA-Z0-9_]*[a-zA-Z0-9]*
 UNDERSCORE_ERROR	[a-zA-Z][a-zA-Z0-9_]*_
 COMMENT		##.*
+UNEXPECTED_ERROR	.
 
 %%
 {FUNCTION}	{ col += yyleng; return FUNCTION; };
@@ -109,17 +111,16 @@ COMMENT		##.*
 {COMMA}		{ col += yyleng; return COMMA; };	//comma
 
 {LSQBRACKET}	{ col += yyleng; return LSQBRACKET; };	//left square bracket
-{RSBRACKET}	{ col += yyleng; return RSBRACKET; };	//right square bracket
+{RSQBRACKET}	{ col += yyleng; return RSQBRACKET; };	//right square bracket
 {ASSIGN}	{ col += yyleng; return ASSIGN; };		//assign statement
 {COMMENT}		
 {NUM_FIRST_ERROR}	{ col+= yyleng; return NUM_FIRST_ERROR; };
 {UNDERSCORE_ERROR}      { col += yyleng; return UNDERSCORE_ERROR; };
-{IDENTIFIER}		{ yylval.dval = strdup(yytext); return IDENTIFIER; }  
-{NUMBER}+       	{ col+= yyleng; yyval.dval = strdup(yytext); return NUMBER; };
+{IDENTIFIER}		{ yylval.tag = strdup(yytext); return IDENTIFIER; };  
+{NUMBER}+       	{ col+= yyleng; yylval.dval = atoi(yytext); return NUMBER; };
 "{"[\^{}}\n]*"}"`	{col++;};
-[ \t]+		{ col++;}
-[\n]+		{ line++; col = 1; return END; };
-.               { col+= yyleng; return UNEXPECTED_ERROR; };
+[ \t]+			{ col++;};
+[\n]+			{ line++; col = 1; return END; };
 
 %%
 

@@ -3,13 +3,13 @@
 
 %{
 #include "heading.h"
-int yyerror(char *s);
-int yylex(void);
+extern yyerror(char *s);
+extern yylex(void);
 %}
 
 %union{
   int		dval;
-  string*	tag;
+  char*	tag;
 }
 
 %start	program
@@ -21,7 +21,7 @@ int yylex(void);
 %token	NUM_FIRST_ERROR UNDERSCORE_ERROR UNEXPECETED_ERROR END 
 
 %token	<tag>	IDENTIFIER
-%token 	<tag> 	NUMBER
+%token 	<dval> 	NUMBER
 
 %type	<tag>	multipl_expr
 %type	<tag>	exp 
@@ -142,7 +142,7 @@ var:		IDENTIFIER
 
 %%
 
-int yyerror(string s)
+extern yyerror(string s)
 {
   extern int yylineno;	// defined and maintained in lex.c
   extern char *yytext;	// defined and maintained in lex.c
@@ -152,7 +152,7 @@ int yyerror(string s)
   exit(1);
 }
 
-int yyerror(char *s)
+extern yyerror(char *s)
 {
   return yyerror(string(s));
 }

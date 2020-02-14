@@ -5,7 +5,7 @@ OBJS	= bison.o lexer.o main.o
 CC	= g++
 CFLAGS	= -g -Wall -ansi -pedantic
 
-calc:		$(OBJS)
+parser:		$(OBJS)
 		$(CC) $(CFLAGS) $(OBJS) -o lexer -lfl
 
 lexer.o:	lexer.c
