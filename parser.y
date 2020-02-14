@@ -12,10 +12,6 @@ int yylex(void);
   string*	tag;
 }
 
-/*%start	input */
-
-%token	<int_val>	INTEGER_LITERAL		/* %token: used to declare token/type name without associativity/precedence. Is also a type tag.*/
-
 %start	program
 
 %token	FUNCTION BEGIN_PARAMS END_PARAMS BEGIN_LOCALS END_LOCALS BEGIN_BODY END_BODY OF ARRAY
@@ -25,26 +21,10 @@ int yylex(void);
 %token	NUM_FIRST_ERROR UNDERSCORE_ERROR UNEXPECETED_ERROR END 
 
 %token	<tag>	IDENTIFIER
-%token 	<dval> 	NUMBER
-/*%token	<tag>	program function declaration statement bool_expr relation_and_expression relation_expression comp exp multipl_expr term var*/
-/*
-%type  	program
-%type  	function
-%type	declaration
-%type	statement
-%type	bool_expr
-%type	relation_and_expression
-%type	relation_expr
-%type	comp
-%type	exp
-%type	multipl_expr
-%type	term
-%type	var
-/*%type	exp			/* %type: When using %union to specify multiple value types, declare value type for each nonterminal symbol*/
-/*%left	PLUS*/					/* %left: denotes a left associatve operator*/
-/*%left	MULT*/
-%type	<dval>	multipl_expr
-%type	<dval>	exp 
+%token 	<tag> 	NUMBER
+
+%type	<tag>	multipl_expr
+%type	<tag>	exp 
 %type 	<tag>	var term
 
 %%
@@ -125,15 +105,15 @@ comp:           EQUAL
 		| GTE
 		;
 
-exp:		multipl_expr {$$ = $$;}
-		| multipl_expr PLUS multipl_expr {$$ = $1 + $3;}
-		| multipl_expr MINUS multipl_expr {$$ = $1 - $3;}
+exp:		multipl_expr
+		| multipl_expr PLUS multipl_expr 
+		| multipl_expr MINUS multipl_expr
 		;
 
-multipl_expr:	term {$$ = $1;}
-		| term MULT term {$$ = $1 * $3;}
-		| term DIV term {$$ = $1 / $3;}
-		| term MOD term {$$ = $1 % $3;}
+multipl_expr:	term 
+		| term MULT term 
+		| term DIV term 
+		| term MOD term
 		;
 
 term:		MINUS term_minus
@@ -154,8 +134,8 @@ term_expr:	/*empty*/
 		| COMMA exp
 		;
 
-var:		IDENTIFIER {$$ = $1;}
-		| IDENTIFIER LSQBRACKET exp RSQBRACKET {$$ = $1;}
+var:		IDENTIFIER 
+		| IDENTIFIER LSQBRACKET exp RSQBRACKET 
 		;
 
 
@@ -176,5 +156,6 @@ int yyerror(char *s)
 {
   return yyerror(string(s));
 }
+
 
 
