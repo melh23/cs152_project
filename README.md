@@ -18,22 +18,22 @@ g++ lexer.c main.cc bison.c parser.tab.c -lfl -o lexer
 
 ## Emacs shortcuts
 
-File: 
-Ctrl-X, Ctrl-F	Open
-Ctrl-X, Ctrl-S	Save
-Ctrl-X, Ctrl-W	Save As
-Ctrl-X, S	Save All
-Ctrl-X, Ctrl-V	Revert to File
-Meta-X, revert-buffer	Revert Buffer
-Ctrl-X, Ctrl-C	Exit
+File: <br/>
+Ctrl-X, Ctrl-F	Open <br/>
+Ctrl-X, Ctrl-S	Save <br/>
+Ctrl-X, Ctrl-W	Save As <br/>
+Ctrl-X, S	Save All <br/>
+Ctrl-X, Ctrl-V	Revert to File <br/>
+Meta-X, revert-buffer	Revert Buffer <br/>
+Ctrl-X, Ctrl-C	Exit <br/>
 
-Edit:
-Ctrl-_	Undo
-Ctrl-Y	Paste
-Ctrl-SPC	Begin Selection
-DEL	Delete
-Ctrl-D	Fwd Delete
-Meta-DEL	Delete Word
-Meta-D	Fwd Delete Word
-Ctrl-K	Delete Line
-Ctrl-W	Delete Selection
+Edit: <br/>
+Ctrl-_	Undo <br/>
+Ctrl-Y	Paste <br/>
+Ctrl-SPC	Begin Selection <br/>
+DEL	Delete <br/>
+Ctrl-D	Fwd Delete <br/>
+Meta-DEL	Delete Word <br/>
+Meta-D	Fwd Delete Word <br/>
+Ctrl-K	Delete Line <br/>
+Ctrl-W	Delete Selection <br/>
