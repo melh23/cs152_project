@@ -17,8 +17,8 @@ bison -v -d --file-prefix=y parser.y.
 g++ lexer.c main.cc bison.c parser.tab.c -lfl -o lexer
 
 ## Emacs shortcuts
-File
------
+
+File: 
 Ctrl-X, Ctrl-F	Open
 Ctrl-X, Ctrl-S	Save
 Ctrl-X, Ctrl-W	Save As
@@ -26,9 +26,8 @@ Ctrl-X, S	Save All
 Ctrl-X, Ctrl-V	Revert to File
 Meta-X, revert-buffer	Revert Buffer
 Ctrl-X, Ctrl-C	Exit
-<br/>
-Edit
-----
+
+Edit:
 Ctrl-_	Undo
 Ctrl-Y	Paste
 Ctrl-SPC	Begin Selection
