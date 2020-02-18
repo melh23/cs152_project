@@ -3,8 +3,11 @@
 
 %{
 #include "heading.h"
-extern yyerror(char *s);
-extern yylex(void);
+extern void yyerror(const char *s);
+//extern yylex(void);
+extern int yylineno;  // defined and maintained in lex.c
+  extern char *yytext;  // defined and maintained in lex.c
+
 %}
 
 %union{
@@ -130,7 +133,7 @@ term_exp:	/*empty*/
 		| exp term_expr term_exp
 		;
 
-term_expr:	/*empty*/
+iterm_expr:	/*empty*/
 		| COMMA exp
 		;
 
@@ -142,20 +145,20 @@ var:		IDENTIFIER
 
 %%
 
-extern yyerror(string s)
+extern void yyerror(const char *s)
 {
-  extern int yylineno;	// defined and maintained in lex.c
-  extern char *yytext;	// defined and maintained in lex.c
+ // extern int yylineno;	// defined and maintained in lex.c
+  //extern char *yytext;	// defined and maintained in lex.c
   
   cerr << "ERROR: " << s << " at symbol \"" << yytext;
   cerr << "\" on line " << yylineno << endl;
   exit(1);
 }
 
-extern yyerror(char *s)
+/*extern void yyerror(const char *s)
 {
   return yyerror(string(s));
-}
+}*/
 
 
 
