@@ -4,7 +4,7 @@
 	int line = 1;
 	int col = 1;
 	#include "heading.h"
-	#include "tok.h"
+	#include "parser.tab.h"
 %}
 
 FUNCTION	function

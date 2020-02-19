@@ -1,7 +1,7 @@
 #include <iostream>
 #include "heading.h"
 
-int yyparse();
+extern int yyparse();
 
 int main(int argc, char **argv)
 {
