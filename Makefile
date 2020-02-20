@@ -1,6 +1,6 @@
 #Makefile
 
-OBJS	= bison.o lexer.o main.o
+OBJS	= bison.o lexer.o
 
 CC	= g++
 CFLAGS	= -g -Wall -ansi -pedantic
@@ -23,11 +23,8 @@ bison.c:	parser.y
 		cp parser.tab.c bison.c
 		cmp -s parser.tab.h tok.h || cp parser.tab.h tok.h
 
-main.o:		main.cc
-		$(CC) $(CFLAGS) -c main.cc -o main.o
-
-lexer.o yac.o main.o	: heading.h
-lexer.o main.o		: tok.h
+lexer.o yac.o		: heading.h
+lexer.o 		: tok.h
 
 clean:
 	rm -f *.o *~ lexer.c lex.yy.c bison.c tok.h parser.tab.c parser.tab.h parser.output parser
