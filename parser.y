@@ -6,6 +6,7 @@
 extern void yyerror(const char *s);
 extern int line;
 extern int col;
+extern int yylex();
 //extern int yylineno;  // defined and maintained in lex.c
   //extern char *yytext;  // defined and maintained in lex.c
 
@@ -120,22 +121,19 @@ multipl_expr:	term
 		| term MOD term
 		;
 
-term:		MINUS term_minus
-		| term_minus
+term:		term_minus
+		| MINUS term_minus
 		| IDENTIFIER L_PAREN term_exp R_PAREN
 		;
 
 term_minus:	var
-		| NUMBER
+		| NUMBER 
 		| L_PAREN exp R_PAREN
 		;
 
 term_exp:	/*empty*/
-		| exp term_exp term_exp
-		;
-
-iterm_expr:	/*empty*/
-		| COMMA exp
+		| exp
+		| exp COMMA term_exp
 		;
 
 var:		IDENTIFIER 
