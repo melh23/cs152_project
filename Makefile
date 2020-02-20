@@ -13,7 +13,7 @@ lexer.o:	lexer.c
 
 lexer.c:	lexer.lex 
 		flex lexer.lex
-		cp lexer.yy.c lexer.c
+		cp lex.yy.c lexer.c
 
 bison.o:	bison.c
 		$(CC) $(CFLAGS) -c bison.c -o bison.o
@@ -30,5 +30,5 @@ lexer.o yac.o main.o	: heading.h
 lexer.o main.o		: tok.h
 
 clean:
-	rm -f *.o *~ lexer.c lexer.yy.c bison.c tok.h parser.tab.c parser.tab.h parser.output parser
+	rm -f *.o *~ lexer.c lex.yy.c bison.c tok.h parser.tab.c parser.tab.h parser.output parser
 
