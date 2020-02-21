@@ -118,9 +118,9 @@ UNEXPECTED_ERROR	.
 {UNDERSCORE_ERROR}      { col += yyleng; return UNDERSCORE_ERROR; };
 {IDENTIFIER}		{ yylval.tag = strdup(yytext); return IDENTIFIER; };  
 {NUMBER}+       	{ col+= yyleng; yylval.dval = atoi(yytext); return NUMBER; };
-"{"[\^{}}\n]*"}"`	{col++;};
-[ \t]+			{ col++;};
-[\n]+			{ line++; col = 1; return END; };
+"{"[\^{}}\n]*"}"`	{ col++;};
+[ \t]			{ col++;};
+[\n]			{ line++; col = 1; };
 
 %%
 

@@ -26,7 +26,7 @@ extern int yylex();
 %token	NUM_FIRST_ERROR UNDERSCORE_ERROR UNEXPECETED_ERROR END 
 
 %token	<tag>	IDENTIFIER
-%token 	<dval> 	NUMBER
+%token 	<tag> 	NUMBER
 
 %type	<tag>	multipl_expr
 %type	<tag>	exp 
@@ -38,9 +38,7 @@ program:	/*empty*/
 		| function {printf("program -> function\n");} 
 		;
 
-function:	FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS fxn_dec END_PARAMS 
-		BEGIN_LOCALS fxn_dec END_LOCALS
-		BEGIN_BODY statement SEMICOLON fxn_statem END_BODY {printf("FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS fxn_dec END_PARAMS BEGIN_LOCALS fxn_dec END_LOCALS BEGIN_BODY statement SEMICOLON fxn_statem END_BODY\n");}
+function:	FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS fxn_dec END_PARAMS BEGIN_LOCALS fxn_dec END_LOCALS BEGIN_BODY statement SEMICOLON fxn_statem END_BODY {printf("FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS fxn_dec END_PARAMS BEGIN_LOCALS fxn_dec END_LOCALS BEGIN_BODY statement SEMICOLON fxn_statem END_BODY\n");}
 		;
 
 fxn_dec:	/*empty*/{ printf("fxn_dec -> epsilon\n");}
@@ -51,8 +49,8 @@ fxn_statem:	/*empty*/ { printf("fxn_statem -> epsilon\n");}
 		| statement SEMICOLON fxn_statem { printf("fxn_dec -> statement SEMICOLON fxn_statem\n");} 
 		;
 
-declaration:    IDENTIFIER dec_comma SEMICOLON INTEGER { printf("declaration -> IDENTIFIER dec_comma SEMICOLON INTEGER\n");} 
-                | IDENTIFIER dec_comma SEMICOLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER { printf("declaration -> IDENTIFIER dec_comma SEMICOLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER\n");} 
+declaration:    IDENTIFIER dec_comma COLON INTEGER { printf("declaration -> IDENTIFIER dec_comma COLON INTEGER\n");} 
+                | IDENTIFIER dec_comma COLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER { printf("declaration -> IDENTIFIER dec_comma COLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER\n");} 
                 ;
 
 dec_comma:	/*empty*/ {printf("dec_comma -> epsilon\n");}
@@ -60,7 +58,7 @@ dec_comma:	/*empty*/ {printf("dec_comma -> epsilon\n");}
 		;
 
 statement:	var ASSIGN exp {printf("statement -> var ASSIGN exp\n");}
-		| IF bool_expr THEN statm_else ENDIF {printf("statement -> IF bool_expr THEN statm_else ENDIF\n");}
+		| IF bool_expr THEN statm_loop statm_else ENDIF {printf("statement -> IF bool_expr THEN statm_else ENDIF\n");}
 		| WHILE bool_expr BEGINLOOP statm_loop ENDLOOP {printf("statement -> WHILE bool_expr BEGINLOOP statm_loop ENDLOOP\n");}
 		| DO BEGINLOOP statm_loop ENDLOOP WHILE bool_expr {printf("statement -> DO BEGINLOOP statm_loop ENDLOOP WHILE bool_expr\n");}
 		| FOR var ASSIGN NUMBER SEMICOLON bool_expr SEMICOLON var ASSIGN exp BEGINLOOP statm_loop ENDLOOP {printf("statement -> FOR var ASSIGN NUMBER SEMICOLON bool_expr SEMICOLON var ASSIGN exp BEGINLOOP statm_loop ENDLOOP\n");}
@@ -70,8 +68,8 @@ statement:	var ASSIGN exp {printf("statement -> var ASSIGN exp\n");}
 		| RETURN exp {printf("statement -> RETURN exp\n");}
 		;
 
-statm_else:	ELSE statm_loop {printf("statm_else -> ELSE statm_loop\n");}
-		| statm_base {printf("statm_else -> statm_base\n");}
+statm_else:	/*empty*/ {printf("statm_else -> epsilon\n");}
+		| ELSE statm_loop {printf("statm_else -> ELSE statm_loop\n");}
 		;
 
 statm_loop:	statm_base {printf("statm_loop -> statm_base\n");}
@@ -82,16 +80,20 @@ statm_base:	statement SEMICOLON {printf("statm_base -> statement SEMICOLON\n");}
 		;
 
 statm_var:	/*empty*/ {printf("statm_var -> epsilon\n");}
-		| COMMA var {printf("statm_var -> COMMA var\n");}
+		| COMMA var statm_var {printf("statm_var -> COMMA var statm_var\n");}
 		;
 
-bool_expr:      relation_and_expression {printf("bool_expr -> relation_and_expression");}
-                | relation_and_expression OR relation_and_expression {printf("bool_expr -> relation_expression OR relation_and_expression\n");}
-                ;
+bool_expr:      relation_and_expression bool_or_loop {printf("bool_expr -> relation_expression bool_or_loop\n");};
 
-relation_and_expression:        relation_expr {printf("relation_expression -> relation_expr\n");}
-                                | relation_expr AND relation_expr {printf("relation_and_expression -> relation_expr AND relation_expr\n");}
-                                ;
+bool_or_loop:	/*empty*/ {printf("bool_or_loop -> epsilon\n");}
+		| OR relation_and_expression bool_or_loop {printf("bool_or_loop -> OR relation_and_expression bool_or_loop\n");}
+		;
+
+relation_and_expression:  	relation_expr bool_and_loop {printf("relation_expression -> relation_expr bool_and_loop\n");};
+
+bool_and_loop:			/*empty*/ {printf("bool_and_loop -> epsilon\n");}
+				| AND relation_expr bool_and_loop {printf("bool_and_loop -> AND relation_expr bool_and_loop\n");}
+				;
 
 relation_expr:  NOT rel_exp_not {printf("relation_expr -> NOT rel_exp_not\n");}
                 | rel_exp_not {printf("relation_expr -> rel_exp_not\n");}
@@ -111,19 +113,23 @@ comp:            EQUAL {printf("comp -> EQUAL\n");}
 		| GTE {printf("comp -> GTE\n");}
 		;
 
-exp:		multipl_expr { printf("exp -> multipl_expr\n");}
-		| multipl_expr PLUS multipl_expr {printf("exp -> multipl_expr PLUS multipl_expr\n");}
-		| multipl_expr MINUS multipl_expr {printf("exp -> multipl_expr MINUS multipl_expr\n");}
+exp:		multipl_expr exp_loop {printf("exp -> multipl_expr exp_loop\n");};
+
+exp_loop:	/*empty*/ {printf("exp_loop -> epsilon\n");}
+		| PLUS exp {printf("exp_loop -> PLUS exp\n");}
+		| MINUS exp {printf("exp_loop -> MINUS exp\n");}
 		;
 
-multipl_expr:	term {printf("multiple_expr -> term\n");}
-		| term MULT term { printf("multipl_expr -> term MULT term\n");}
-		| term DIV term  {printf("multipl_expr -> term DIV term\n");}
-		| term MOD term {  printf("multipl_expr -> term MOD term\n");}
+multipl_expr:	term multipl_loop {printf("multiple_expr -> term multipl_loop\n");};
+
+multipl_loop:	/*empty*/ {printf("multipl_loop -> epsilon\n");} 
+		| MULT term {printf("multipl_loop -> MULT term\n");} 
+		| DIV term {printf("multipl_loop -> DIV term\n");}
+		| MOD term {printf("multipl_loop -> MOD term\n");}
 		;
 
-term:		term_minus { printf("term -> MINUS term_minus\n");} 
-		| MINUS term_minus { printf("term -> term_minus\n");}
+term:		term_minus { printf("term -> term_minus\n");} 
+		| MINUS term_minus { printf("term -> MINUS term_minus\n");}
 		| IDENTIFIER L_PAREN term_exp R_PAREN { printf("term -> identifier L_PAREN exp R_PAREN\n");}
 		;
 
