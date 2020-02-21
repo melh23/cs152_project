@@ -6,7 +6,7 @@ CC	= g++
 CFLAGS	= -g -Wall -ansi -pedantic
 
 parser:		$(OBJS)
-		$(CC) $(CFLAGS) $(OBJS) -o lexer -lfl
+		$(CC) $(CFLAGS) $(OBJS) -o parser -lfl
 
 lexer.o:	lexer.c
 		$(CC) $(CFLAGS) -c lexer.c -o lexer.o
