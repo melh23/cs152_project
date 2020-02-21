@@ -38,7 +38,7 @@ program:	/*empty*/
 		| function {printf("program -> function\n");} 
 		;
 
-function:	FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS fxn_dec END_PARAMS BEGIN_LOCALS fxn_dec END_LOCALS BEGIN_BODY statement SEMICOLON fxn_statem END_BODY {printf("FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS fxn_dec END_PARAMS BEGIN_LOCALS fxn_dec END_LOCALS BEGIN_BODY statement SEMICOLON fxn_statem END_BODY\n");}
+function:	FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS fxn_dec END_PARAMS BEGIN_LOCALS fxn_dec END_LOCALS BEGIN_BODY statement SEMICOLON fxn_statem END_BODY {printf("function -> FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS fxn_dec END_PARAMS BEGIN_LOCALS fxn_dec END_LOCALS BEGIN_BODY statement SEMICOLON fxn_statem END_BODY\n");}
 		;
 
 fxn_dec:	/*empty*/{ printf("fxn_dec -> epsilon\n");}
@@ -46,7 +46,7 @@ fxn_dec:	/*empty*/{ printf("fxn_dec -> epsilon\n");}
 		;
 
 fxn_statem:	/*empty*/ { printf("fxn_statem -> epsilon\n");} 
-		| statement SEMICOLON fxn_statem { printf("fxn_dec -> statement SEMICOLON fxn_statem\n");} 
+		| statement SEMICOLON fxn_statem { printf("fxn_statem -> statement SEMICOLON fxn_statem\n");} 
 		;
 
 declaration:    IDENTIFIER dec_comma COLON INTEGER { printf("declaration -> IDENTIFIER dec_comma COLON INTEGER\n");} 
@@ -58,7 +58,7 @@ dec_comma:	/*empty*/ {printf("dec_comma -> epsilon\n");}
 		;
 
 statement:	var ASSIGN exp {printf("statement -> var ASSIGN exp\n");}
-		| IF bool_expr THEN statm_loop statm_else ENDIF {printf("statement -> IF bool_expr THEN statm_else ENDIF\n");}
+		| IF bool_expr THEN statm_loop statm_else ENDIF {printf("statement -> IF bool_expr THEN statm_loop statm_else ENDIF\n");}
 		| WHILE bool_expr BEGINLOOP statm_loop ENDLOOP {printf("statement -> WHILE bool_expr BEGINLOOP statm_loop ENDLOOP\n");}
 		| DO BEGINLOOP statm_loop ENDLOOP WHILE bool_expr {printf("statement -> DO BEGINLOOP statm_loop ENDLOOP WHILE bool_expr\n");}
 		| FOR var ASSIGN NUMBER SEMICOLON bool_expr SEMICOLON var ASSIGN exp BEGINLOOP statm_loop ENDLOOP {printf("statement -> FOR var ASSIGN NUMBER SEMICOLON bool_expr SEMICOLON var ASSIGN exp BEGINLOOP statm_loop ENDLOOP\n");}
@@ -89,7 +89,7 @@ bool_or_loop:	/*empty*/ {printf("bool_or_loop -> epsilon\n");}
 		| OR relation_and_expression bool_or_loop {printf("bool_or_loop -> OR relation_and_expression bool_or_loop\n");}
 		;
 
-relation_and_expression:  	relation_expr bool_and_loop {printf("relation_expression -> relation_expr bool_and_loop\n");};
+relation_and_expression:  	relation_expr bool_and_loop {printf("relation_and_expression -> relation_expr bool_and_loop\n");};
 
 bool_and_loop:			/*empty*/ {printf("bool_and_loop -> epsilon\n");}
 				| AND relation_expr bool_and_loop {printf("bool_and_loop -> AND relation_expr bool_and_loop\n");}
@@ -130,7 +130,7 @@ multipl_loop:	/*empty*/ {printf("multipl_loop -> epsilon\n");}
 
 term:		term_minus { printf("term -> term_minus\n");} 
 		| MINUS term_minus { printf("term -> MINUS term_minus\n");}
-		| IDENTIFIER L_PAREN term_exp R_PAREN { printf("term -> identifier L_PAREN exp R_PAREN\n");}
+		| IDENTIFIER L_PAREN term_exp R_PAREN { printf("term -> IDENTIFIER L_PAREN term_exp R_PAREN\n");}
 		;
 
 term_minus:	var {printf("term_minus -> var\n");}
