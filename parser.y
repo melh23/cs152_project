@@ -3,6 +3,8 @@
 
 %{
 #include "heading.h"
+#include <sstream>
+
 extern void yyerror(const char *s);
 extern int line;
 extern int col;
@@ -10,21 +12,52 @@ extern int yylex();
 //extern int yylineno;  // defined and maintained in lex.c
   //extern char *yytext;  // defined and maintained in lex.c
 
+int countL = 0;
+int countT = 0;
+enum TYPE{
+        INT, STRING, DEFAULT
+};
+
+string newlabel(){
+    stringstream ss;
+    string toReturn;
+    
+    ss << countL;
+    string number;
+    ss >> number;
+	toReturn = "label_" + number;
+    countL++;
+    return toReturn;
+}
+
+string newtemp(){
+    string toReturn;
+    stringstream ss;
+
+    ss << countT;
+    string number;
+    ss >> number;
+    toReturn = "temp_" + number;
+    countT++;
+    return toReturn;
+}
+
 struct symbol
 {
 	string id;
 	TYPE type;
-	symbol(string i, TYPE t = INTEGER):id(i), type(t) {}
-}
+	symbol(string i, TYPE t):id(i), type(t) {}
+};
 
 struct symbolTable
 {
 	vector<symbol> table;
-	newsymbol(string id, TYPE t = INTEGER) {
+	symbolTable newsymbol(string id, TYPE t) {
 		symbol newSymbol(id, t);
 		table.push_back(newSymbol);
+		return *this;
 	}
-}
+};
 
 %}
 
