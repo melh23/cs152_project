@@ -10,10 +10,26 @@ extern int yylex();
 //extern int yylineno;  // defined and maintained in lex.c
   //extern char *yytext;  // defined and maintained in lex.c
 
+struct symbol
+{
+	string id;
+	TYPE type;
+	symbol(string i, TYPE t = INTEGER):id(i), type(t) {}
+}
+
+struct symbolTable
+{
+	vector<symbol> table;
+	newsymbol(string id, TYPE t = INTEGER) {
+		symbol newSymbol(id, t);
+		table.push_back(newSymbol);
+	}
+}
+
 %}
 
 %union{
-  int		dval;
+  int	dval;
   char*	tag;
 }
 
