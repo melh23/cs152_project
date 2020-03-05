@@ -98,12 +98,22 @@ fxn_statem:	/*empty*/ { printf("fxn_statem -> epsilon\n");}
 		| statement SEMICOLON fxn_statem { printf("fxn_statem -> statement SEMICOLON fxn_statem\n");} 
 		;
 
-declaration:    IDENTIFIER dec_comma COLON INTEGER { printf("declaration -> IDENTIFIER dec_comma COLON INTEGER\n");} 
+declaration:    IDENTIFIER dec_comma COLON INTEGER {/* printf("declaration -> IDENTIFIER dec_comma COLON INTEGER\n");*/
+							stringstream ss;
+							ss << ". " << $1;
+							//$$.code = ss.str();
+							cout << ss.str();
+						   } 
                 | IDENTIFIER dec_comma COLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER { printf("declaration -> IDENTIFIER dec_comma COLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER\n");} 
                 ;
 
-dec_comma:	/*empty*/ {printf("dec_comma -> epsilon\n");}
-		| COMMA IDENTIFIER dec_comma {printf("dec_comma -> COMMA IDENTIFIER dec_comma\n");}
+dec_comma:	/*empty*/ { //printf("dec_comma -> epsilon\n");
+				
+			  }
+		| COMMA IDENTIFIER dec_comma { //printf("dec_comma -> COMMA IDENTIFIER dec_comma\n");
+						stringstream ss;
+						
+		  }
 		;
 
 statement:	var ASSIGN exp {printf("statement -> var ASSIGN exp\n");}
@@ -192,7 +202,13 @@ term_exp:	/*empty*/ { printf("term_exp -> epsilon\n");}
 		| exp COMMA term_exp { printf("term_exp -> exp COMMA term_exp\n");} 
 		;
 
-var:		IDENTIFIER { printf("var -> IDENTIFIER %s\n", $1);} 
+var:		IDENTIFIER { /*printf("var -> IDENTIFIER %s\n", $1);*/
+			   	//string label = newlabel();
+				stringstream ss;
+				ss <<  $1;
+
+			cout << "\n\n\n\n" << ss.str() << "\n\n\n\n";
+			   } 
 		| IDENTIFIER LSQBRACKET exp RSQBRACKET { printf("var -> IDENTIFIER LSQBRACKET exp RSQBRACKET\n");}  
 		;
 
