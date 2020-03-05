@@ -192,7 +192,7 @@ term_exp:	/*empty*/ { printf("term_exp -> epsilon\n");}
 		| exp COMMA term_exp { printf("term_exp -> exp COMMA term_exp\n");} 
 		;
 
-var:		IDENTIFIER { printf("var -> IDENTIFIER\n");} 
+var:		IDENTIFIER { printf("var -> IDENTIFIER %s\n", $1);} 
 		| IDENTIFIER LSQBRACKET exp RSQBRACKET { printf("var -> IDENTIFIER LSQBRACKET exp RSQBRACKET\n");}  
 		;
 
