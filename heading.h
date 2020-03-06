@@ -3,9 +3,18 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
+#include <cstring>
 #include <cstdlib>
 #include <vector>
 using namespace std;
+
+
+struct state
+{
+	char* code;
+	char* str;
+};
+
 /*
 int countL = 0; 
 int countT = 0;

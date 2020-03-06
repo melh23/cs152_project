@@ -3,7 +3,7 @@
 OBJS	= bison.o lexer.o
 
 CC	= g++
-CFLAGS	= -g -Wall -ansi -pedantic
+CFLAGS	= -g -Wall -ansi -pedantic -std=c++11
 
 parser:		$(OBJS)
 		$(CC) $(CFLAGS) $(OBJS) -o parser -lfl

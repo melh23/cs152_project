@@ -57,13 +57,29 @@ struct symbolTable
 		table.push_back(newSymbol);
 		return *this;
 	}
+
+	void printtable() {
+		size_t elements = table.size();
+		for(size_t i = 0; i < elements; i++)
+			cout << table[i].id << ", " << table[i].type << endl;
+	}
 };
+/*
+struct state
+{
+	string* code;
+	string* ret_name;
+};
+*/
+
+symbolTable t;
 
 %}
 
 %union{
   int	dval;
   char*	tag;
+  struct state st;
 }
 
 %start	program
@@ -75,15 +91,17 @@ struct symbolTable
 %token	NUM_FIRST_ERROR UNDERSCORE_ERROR UNEXPECETED_ERROR END 
 
 %token	<tag>	IDENTIFIER
-%token 	<tag> 	NUMBER
+%token 	<dval> 	NUMBER
 
-%type	<tag>	multipl_expr
-%type	<tag>	exp 
-%type 	<tag>	var term
+%type	<st>	function fxn_dec fxn_statem declaration dec_comma statement 
+%type 	<st>	statm_else statm_loop statm_base statm_var bool_expr bool_or_loop
+%type	<st>	relation_and_expression bool_and_loop relation_expr rel_exp_not
+%type	<st>	comp exp exp_loop multipl_expr multipl_loop term term_minus term_exp
+%type	<st>	var
 
 %%
 
-program:	/*empty*/
+program:	/*empty*/ 
 		| function {printf("program -> function\n");} 
 		;
 
@@ -99,20 +117,45 @@ fxn_statem:	/*empty*/ { printf("fxn_statem -> epsilon\n");}
 		;
 
 declaration:    IDENTIFIER dec_comma COLON INTEGER {/* printf("declaration -> IDENTIFIER dec_comma COLON INTEGER\n");*/
+							t = t.newsymbol($1, INT);
 							stringstream ss;
-							ss << ". " << $1;
-							//$$.code = ss.str();
-							cout << ss.str();
+							ss << ". " << $1 << '\n';
+							ss << $2.code;
+							
+							$$.code = strdup(ss.str().c_str());
+							cout << $$.code;
 						   } 
-                | IDENTIFIER dec_comma COLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER { printf("declaration -> IDENTIFIER dec_comma COLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER\n");} 
+                | IDENTIFIER dec_comma COLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER { //printf("declaration -> IDENTIFIER dec_comma COLON ARRAY LSQBRACKET NUMBER RSQBRACKET OF INTEGER\n");
+							t = t.newsymbol($1, INT);
+							stringstream ss;
+							ss << ". [] " << $1 << ", " << $6 << '\n';
+							ss << $2.code;
+
+							$$.code = strdup(ss.str().c_str());
+							cout << $$.code;
+							//$$->code->assign(ss.str().c_str());
+							//cout << $$->code << endl;
+							//$$->code = ss.str().c_str();
+							//strcpy($$->code, ss.str().c_str());
+						   } 
                 ;
 
 dec_comma:	/*empty*/ { //printf("dec_comma -> epsilon\n");
-				
+				stringstream ss;
+				ss << "";
+				$$.code = strdup(ss.str().c_str());
 			  }
 		| COMMA IDENTIFIER dec_comma { //printf("dec_comma -> COMMA IDENTIFIER dec_comma\n");
+						t = t.newsymbol($2, INT);
 						stringstream ss;
-						
+						ss << ". " << $2 << '\n';
+						ss << $3.code;
+
+						$$.code = strdup(ss.str().c_str());
+						//cout << $$.code << endl;
+						//$$->code->assign(ss.str().c_str());
+						//$$->code = ss.str().c_str();
+						//strcpy($$->code, ss.str().c_str());
 		  }
 		;
 
@@ -172,10 +215,17 @@ comp:            EQUAL {printf("comp -> EQUAL\n");}
 		| GTE {printf("comp -> GTE\n");}
 		;
 
-exp:		multipl_expr exp_loop {printf("exp -> multipl_expr exp_loop\n");};
+exp:		multipl_expr exp_loop {printf("exp -> multipl_expr exp_loop\n");
+				
+			};
 
 exp_loop:	/*empty*/ {printf("exp_loop -> epsilon\n");}
-		| PLUS exp {printf("exp_loop -> PLUS exp\n");}
+		| PLUS exp {/*printf("exp_loop -> PLUS exp\n");*/
+				string temp = newtemp();
+				stringstream ss;
+				ss << "+ " << temp << '\n';
+				cout << ss.str();
+			}
 		| MINUS exp {printf("exp_loop -> MINUS exp\n");}
 		;
 
@@ -202,12 +252,12 @@ term_exp:	/*empty*/ { printf("term_exp -> epsilon\n");}
 		| exp COMMA term_exp { printf("term_exp -> exp COMMA term_exp\n");} 
 		;
 
-var:		IDENTIFIER { /*printf("var -> IDENTIFIER %s\n", $1);*/
+var:		IDENTIFIER { printf("var -> IDENTIFIER %s\n", $1);
 			   	//string label = newlabel();
-				stringstream ss;
-				ss <<  $1;
+				/*stringstream ss;
+				ss <<  $1 << " ID \n";
 
-			cout << "\n\n\n\n" << ss.str() << "\n\n\n\n";
+			cout << "\n\n\n\n" << ss.str() << "\n\n\n\n";*/
 			   } 
 		| IDENTIFIER LSQBRACKET exp RSQBRACKET { printf("var -> IDENTIFIER LSQBRACKET exp RSQBRACKET\n");}  
 		;
@@ -238,6 +288,8 @@ int main(int argc, char **argv)
   }
 
   yyparse();
+
+  t.printtable();
 
   return 0;
 }
