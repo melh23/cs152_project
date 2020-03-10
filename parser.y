@@ -160,10 +160,27 @@ dec_comma:	/*empty*/ { //printf("dec_comma -> epsilon\n");
 		;
 
 statement:	var ASSIGN exp {printf("statement -> var ASSIGN exp\n");}
-		| IF bool_expr THEN statm_loop statm_else ENDIF {printf("statement -> IF bool_expr THEN statm_loop statm_else ENDIF\n");}
+		| IF bool_expr THEN statm_loop statm_else ENDIF {
+			//printf("statement -> IF bool_expr THEN statm_loop statm_else ENDIF\n");
+			    stringstream ss;
+			    string label0 = newlabel();
+			    string label1 = newlabel();
+			    string label2 = newlabel();
+
+			    ss << $2.code;
+			    ss << "?:=" << label0 << "," <<  $2.str;
+			    ss << ":=" << label1;
+			    ss << ":" << label0;
+			    ss << $4.code;
+			    ss << ":" << label1;
+			    ss << ":" << label2;
+			    $$.code = strdup(ss.str().c_str());
+			   cout << $$.code;
+			}
 		| WHILE bool_expr BEGINLOOP statm_loop ENDLOOP {printf("statement -> WHILE bool_expr BEGINLOOP statm_loop ENDLOOP\n");}
 		| DO BEGINLOOP statm_loop ENDLOOP WHILE bool_expr {printf("statement -> DO BEGINLOOP statm_loop ENDLOOP WHILE bool_expr\n");}
-		| FOR var ASSIGN NUMBER SEMICOLON bool_expr SEMICOLON var ASSIGN exp BEGINLOOP statm_loop ENDLOOP {printf("statement -> FOR var ASSIGN NUMBER SEMICOLON bool_expr SEMICOLON var ASSIGN exp BEGINLOOP statm_loop ENDLOOP\n");}
+		| FOR var ASSIGN NUMBER SEMICOLON bool_expr SEMICOLON var ASSIGN exp BEGINLOOP statm_loop ENDLOOP 
+		  {printf("statement -> FOR var ASSIGN NUMBER SEMICOLON bool_expr SEMICOLON var ASSIGN exp BEGINLOOP statm_loop ENDLOOP\n");}
 		| READ var statm_var {printf("statement -> READ var statm_var\n");}
 		| WRITE var statm_var {printf("statemnt -> WRITE var statm_var\n");}
 		| CONTINUE {printf("statement -> CONTINUE\n");}
@@ -201,18 +218,57 @@ relation_expr:  NOT rel_exp_not {printf("relation_expr -> NOT rel_exp_not\n");}
                 | rel_exp_not {printf("relation_expr -> rel_exp_not\n");}
                 ;
 
-rel_exp_not:	exp comp exp {printf("rel_exp_not -> exp comp exp\n");}
+rel_exp_not:	exp comp exp {
+			//printf("rel_exp_not -> exp comp exp\n");
+			stringstream ss;
+			t = t.newsymbol($1,STRING);
+			t = t.newsymbol($3,STRING);
+			ss << $2.code << "," << $1.code << "," << $3.code << "\n";
+			$$.code = strdup(ss.str().c_str());
+			
+		}
 		| TRUE {printf("rel_exp_not -> TRUE\n");}
 		| FALSE {printf("rel_exp_not -> FALSE\n");}
 		| L_PAREN bool_expr R_PAREN  {printf("rel_exp_not -> L_PAREN bool_expr R_PAREN\n");}
 		;
 
-comp:            EQUAL {printf("comp -> EQUAL\n");}
-		| NEQ {printf("comp -> NEQ\n");}
-		| LT {printf("comp -> LT\n");}
-		| GT {printf("comp -> GT\n");}
-		| LTE {printf("comp -> LTE\n");}
-		| GTE {printf("comp -> GTE\n");}
+comp:            EQUAL {
+			//printf("comp -> EQUAL\n");
+			stringstream ss;
+			ss << "==";
+			$$.code = strdup(ss.str().c_str());
+			cout << $$.code;
+		}
+		| NEQ { //printf("comp -> NEQ\n");
+			stringstream ss;
+			ss << "!=";
+			$$.code = strdup(ss.str().c_str()); 
+			cout << $$.code;
+		}
+		| LT { //printf("comp -> LT\n");
+			stringstream ss;
+			ss << "<";
+                        $$.code = strdup(ss.str().c_str()); 
+			cout << $$.code;
+		}
+		| GT { //printf("comp -> GT\n");
+			stringstream ss;
+			ss << ">";
+                        $$.code = strdup(ss.str().c_str()); 
+			cout << $$.code;
+		}
+		| LTE { //printf("comp -> LTE\n");
+			stringstream ss;
+			ss << "<=";
+                        $$.code = strdup(ss.str().c_str()); 
+			cout << $$.code;
+		}
+		| GTE { //printf("comp -> GTE\n");
+			stringstream ss;
+			ss << ">=";
+                        $$.code = strdup(ss.str().c_str()); 
+			cout << $$.code;
+		}
 		;
 
 exp:		multipl_expr exp_loop {printf("exp -> multipl_expr exp_loop\n");
@@ -221,18 +277,24 @@ exp:		multipl_expr exp_loop {printf("exp -> multipl_expr exp_loop\n");
 
 exp_loop:	/*empty*/ {printf("exp_loop -> epsilon\n");}
 		| PLUS exp {/*printf("exp_loop -> PLUS exp\n");*/
-				string temp = newtemp();
+				//string temp = newtemp();
 				stringstream ss;
-				ss << "+ " << temp << '\n';
-				cout << ss.str();
+				ss << "+ " << $2.code << '\n';
+				$$.code = strdup(ss.str().c_str());
+				cout << $$.code;
 			}
-		| MINUS exp {printf("exp_loop -> MINUS exp\n");}
+		| MINUS exp { //printf("exp_loop -> MINUS exp\n");
+			stringstream ss;
+			ss << "- " << $2.code << "/n";
+			$$.code = strdup(ss.str().c_str());
+			cout << $$.code;
+		}
 		;
 
 multipl_expr:	term multipl_loop {printf("multiple_expr -> term multipl_loop\n");};
 
 multipl_loop:	/*empty*/ {printf("multipl_loop -> epsilon\n");} 
-		| MULT term {printf("multipl_loop -> MULT term\n");} 
+		| MULT term { printf("multipl_loop -> MULT term\n");} 
 		| DIV term {printf("multipl_loop -> DIV term\n");}
 		| MOD term {printf("multipl_loop -> MOD term\n");}
 		;
