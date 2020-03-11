@@ -221,8 +221,8 @@ relation_expr:  NOT rel_exp_not {printf("relation_expr -> NOT rel_exp_not\n");}
 rel_exp_not:	exp comp exp {
 			//printf("rel_exp_not -> exp comp exp\n");
 			stringstream ss;
-			t = t.newsymbol($1,STRING);
-			t = t.newsymbol($3,STRING);
+			t = t.newsymbol($1.str , STRING);
+			t = t.newsymbol($3.str , STRING);
 			ss << $2.code << "," << $1.code << "," << $3.code << "\n";
 			$$.code = strdup(ss.str().c_str());
 			
@@ -293,10 +293,26 @@ exp_loop:	/*empty*/ {printf("exp_loop -> epsilon\n");}
 
 multipl_expr:	term multipl_loop {printf("multiple_expr -> term multipl_loop\n");};
 
-multipl_loop:	/*empty*/ {printf("multipl_loop -> epsilon\n");} 
-		| MULT term { printf("multipl_loop -> MULT term\n");} 
-		| DIV term {printf("multipl_loop -> DIV term\n");}
-		| MOD term {printf("multipl_loop -> MOD term\n");}
+multipl_loop:	/*empty*/ { printf("multipl_loop -> epsilon\n");
+		
+		} 
+		| MULT term { //printf("multipl_loop -> MULT term\n");
+			stringstream ss;
+			ss << "* " << $2.code;
+			$$.code = strdup(ss.str().c_str());
+			cout << $$.code;
+		} 
+		| DIV term { //printf("multipl_loop -> DIV term\n");
+			stringstream ss;
+			ss << "/ " << $2.code;
+			$$.code = strdup(ss.str().c_str());
+			cout << $$.code;
+		}
+		| MOD term { //printf("multipl_loop -> MOD term\n");
+			stringstream ss;
+			ss << "% " << $2.code;
+			cout << $$.code;
+		}
 		;
 
 term:		term_minus { printf("term -> term_minus\n");} 
@@ -305,7 +321,12 @@ term:		term_minus { printf("term -> term_minus\n");}
 		;
 
 term_minus:	var {printf("term_minus -> var\n");}
-		| NUMBER {printf("term_minus -> NUMBER\n");}
+		| NUMBER { //printf("term_minus -> NUMBER\n");
+				stringstream ss;
+				ss << $1;
+				$$.code = strdup(ss.str().c_str());
+				cout << $$.code;
+			}
 		| L_PAREN exp R_PAREN {printf("term_minus -> L_PAREN exp R_PAREN\n");}
 		;
 
