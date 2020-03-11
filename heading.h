@@ -13,6 +13,13 @@ struct state
 {
 	char* code;
 	char* str;
+	char* oper;
+	char* dest;
+	char* lhs;
+	char* rhs;
+	char* truelabel;
+	char* falselabel;
+	char* endlabel;
 };
 
 /*
