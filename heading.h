@@ -20,6 +20,12 @@ struct state
 	char* truelabel;
 	char* falselabel;
 	char* endlabel;
+	char* index;
+	char* strulabel;
+	char* sfalselabel;
+	char* sendlabel;
+	char* scode;
+	char* sstr;
 };
 
 /*
