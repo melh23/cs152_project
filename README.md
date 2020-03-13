@@ -1,4 +1,29 @@
 # cs152_project
+Ashly Hernandez </br>
+Melanie Henneessee </br>
+
+***mil code is generated and output to a file called output.mil
+
+
+## Working Features
+1. Declarations (scalar and array)
+2. Input/output statements
+3. Arithmetic operations
+4. Comparison operations
+5. Logical operator statements
+6. Delcaring labels
+7. If then else statemetns
+8. Write statements
+9. Read statements
+10. While loop
+11. Do while
+12. Return
+
+
+## Not implemented features
+1. For loop
+2. Assign 
+
 
 ## Flex commands:  
 flex -o lexer.c lexer.lex <br/>
