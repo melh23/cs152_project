@@ -178,28 +178,28 @@ statement:	var ASSIGN exp {//printf("statement -> var ASSIGN exp\n");
 		}
 		| IF bool_expr THEN statm_loop statm_else ENDIF {//printf("statement -> IF bool_expr THEN statm_loop statm_else ENDIF\n");
 			
-		    stringstream ss;
-		    string truelabel = newlabel();
-		    ss << $2.code;
-		    ss << "?:= " << truelabel << "," << $2.str << endl;
+		    	stringstream ss;
+		    	string truelabel = newlabel();
+			ss << $2.code;
+			ss << "?:= " << truelabel << "," << $2.str << endl;
 
-		    if($5.falselabel) {			//if there is an else
-		    	ss << ":= " << $5.falselabel << endl;
-		    } else {				//if there isn't an else
-			ss << ":= " << $5.endlabel << endl;
-		    }
+			if($5.falselabel) {			//if there is an else
+	    			ss << ":= " << $5.falselabel << endl;
+			} else {				//if there isn't an else
+				ss << ":= " << $5.endlabel << endl;
+			}
 
-		    ss << "    : " << truelabel << endl;
-		    ss << $4.code;
+		    	ss << "    : " << truelabel << endl;
+		    	ss << $4.code;
 
-		    if($5.falselabel) { 		//if there's an else
-		 	ss << "    : " << $5.falselabel << endl;
-			ss << $5.code;
-		    }
+		    	if($5.falselabel) { 		//if there's an else
+		 		ss << "    : " << $5.falselabel << endl;
+				ss << $5.code;
+		    	}
 
-		    ss << "    : " << $5.endlabel << endl;
+		    	ss << "    : " << $5.endlabel << endl;
 
-		    $$.code = strdup(ss.str().c_str());
+			$$.code = strdup(ss.str().c_str());
 		}
 		| WHILE bool_expr BEGINLOOP statm_loop ENDLOOP {//printf("statement -> WHILE bool_expr BEGINLOOP statm_loop ENDLOOP\n");
 			string truelabel = newlabel();
