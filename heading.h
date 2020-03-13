@@ -15,18 +15,10 @@ struct state
 	char* code;
 	char* str;
 	char* oper;
-	char* dest;
-	char* lhs;
-	char* rhs;
-	char* truelabel;
 	char* falselabel;
 	char* endlabel;
 	char* index;
-	char* strulabel;
-	char* sfalselabel;
-	char* sendlabel;
-	char* scode;
-	char* sstr;
+	char* arr;
 };
 
 /*
