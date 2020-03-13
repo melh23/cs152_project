@@ -17,12 +17,12 @@ Melanie Henneessee </br>
 9. Read statements
 10. While loop
 11. Do while
-12. Return
+12. For loop
+13. Return
 
 
 ## Not implemented features
-1. For loop
-2. Assign 
+1. Assign 
 
 
 ## Flex commands:  
