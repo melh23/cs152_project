@@ -9,8 +9,6 @@ extern void yyerror(const char *s);
 extern int line;
 extern int col;
 extern int yylex();
-//extern int yylineno;  // defined and maintained in lex.c
-  //extern char *yytext;  // defined and maintained in lex.c
 
 int countL = 0;
 int countT = 0;
@@ -64,13 +62,6 @@ struct symbolTable
 			cout << table[i].id << ", " << table[i].type << endl;
 	}
 };
-/*
-struct state
-{
-	string* code;
-	string* ret_name;
-};
-*/
 
 symbolTable t;
 stringstream result;
@@ -172,7 +163,21 @@ dec_comma:	/*empty*/ { //printf("dec_comma -> epsilon\n");
 
 statement:	var ASSIGN exp {//printf("statement -> var ASSIGN exp\n");
 			stringstream ss;
+			string str2 = $3.str;
 			ss << $1.code << $3.code;
+			
+			if($3.arr) {
+				str2 = newtemp();
+				ss << "=[] " << str2 << ", " << $3.str << ", " << $3.index << endl;
+			}
+		
+			if($1.arr) {                
+				str2 = newtemp(); 
+				ss << "[]= " << $1.str << ", " << $1.index << ", " << str2 << endl;
+			} else {
+				ss << "= " << $1.str << ", " << str2 << endl;
+			}
+
 			$$.code = strdup(ss.str().c_str());
 			$$.str = strdup("");
 		}
@@ -329,12 +334,16 @@ statm_base:	statement SEMICOLON {//printf("statm_base -> statement SEMICOLON\n")
 statm_var:	/*empty*/ {//printf("statm_var -> epsilon\n");
 			$$.code = strdup("");
 			$$.str = strdup("");
+			$$.arr = false;
 		}
 		| COMMA var statm_var {//printf("statm_var -> COMMA var statm_var\n");
 			stringstream ss;
 			ss << $2.code << $3.code;
 			$$.code = strdup(ss.str().c_str());
 			$$.str = strdup("");
+			$$.arr = false;
+			//$$.arr = $2.arr;
+			//if($2.arr) $$.index = $2.index;
 		}
 		;
 
@@ -347,10 +356,12 @@ bool_expr:      relation_and_expression bool_or_loop {//printf("bool_expr -> rel
 				ss << $2.oper << dest << ", " << $1.str << ", " << $2.str << endl;
 			}
 			$$.code = strdup(ss.str().c_str());
+			$$.arr = false;
 		};
 
 bool_or_loop:	/*empty*/ {//printf("bool_or_loop -> epsilon\n");
 			$$.code = strdup("");
+			$$.arr = false;
 		}
 		| OR relation_and_expression bool_or_loop {//printf("bool_or_loop -> OR relation_and_expression bool_or_loop\n");
 			$$.oper = strdup("||");
@@ -365,42 +376,46 @@ bool_or_loop:	/*empty*/ {//printf("bool_or_loop -> epsilon\n");
 				$$.str = strdup($2.str);
 			}
 			$$.code = strdup(ss.str().c_str());
+			$$.arr = false;
 		}
 		;
 
-relation_and_expression:  	relation_expr bool_and_loop {//printf("relation_and_expression -> relation_expr bool_and_loop\n");
-					stringstream ss;
-					ss << $1.code << $2.code;
-					
-					if($2.oper == "&&") {
-						string dest = newtemp();
-						ss << "&& " << dest << ", " << $1.str << ", " << $2.str << endl;
-						$$.str = strdup(dest.c_str());
-					} else {
-						$$.str = strdup($1.str);
-					}
-					$$.code = strdup(ss.str().c_str());
-				};
-
-bool_and_loop:			/*empty*/ {//printf("bool_and_loop -> epsilon\n");
-					$$.str = strdup("");
-					$$.code = strdup("");
-				}
-				| AND relation_expr bool_and_loop {//printf("bool_and_loop -> AND relation_expr bool_and_loop\n");
+relation_and_expression:  relation_expr bool_and_loop {//printf("relation_and_expression -> relation_expr bool_and_loop\n");
+				stringstream ss;
+				ss << $1.code << $2.code;
+				
+				if($2.oper == "&&") {
 					string dest = newtemp();
-					stringstream ss;
-					ss << $2.code;
-					$$.oper = strdup("&&");
-					if($3.oper == "&&") {
-						ss << $3.code;	
-						ss << "&& " << dest << ", " << $2.str << ", " << $3.str << endl;
-						$$.str = strdup(dest.c_str());
-					} else {
-						$$.str = $2.str;
-					}
-					$$.code = strdup(ss.str().c_str());
+					ss << "&& " << dest << ", " << $1.str << ", " << $2.str << endl;
+					$$.str = strdup(dest.c_str());
+				} else {
+					$$.str = strdup($1.str);
 				}
-				;
+				$$.code = strdup(ss.str().c_str());
+				$$.arr = false;
+			};
+
+bool_and_loop:	/*empty*/ {//printf("bool_and_loop -> epsilon\n");
+			$$.str = strdup("");
+			$$.code = strdup("");
+			$$.arr = false;
+		}
+		| AND relation_expr bool_and_loop {//printf("bool_and_loop -> AND relation_expr bool_and_loop\n");
+			string dest = newtemp();
+			stringstream ss;
+			ss << $2.code;
+			$$.oper = strdup("&&");
+			if($3.oper == "&&") {
+				ss << $3.code;	
+				ss << "&& " << dest << ", " << $2.str << ", " << $3.str << endl;
+				$$.str = strdup(dest.c_str());
+			} else {
+				$$.str = $2.str;
+			}
+			$$.code = strdup(ss.str().c_str());
+			$$.arr = false;
+		}
+		;
 
 relation_expr:  NOT rel_exp_not {//printf("relation_expr -> NOT rel_exp_not\n");
 			string dest = newtemp();
@@ -409,18 +424,29 @@ relation_expr:  NOT rel_exp_not {//printf("relation_expr -> NOT rel_exp_not\n");
 			ss << "!" << dest << ", " << $2.str;
 			$$.code = strdup(ss.str().c_str());
 			$$.str = strdup(dest.c_str());
+			$$.arr = false;
 		}
                 | rel_exp_not {//printf("relation_expr -> rel_exp_not\n");
 			$$.code = strdup($1.code);
 			$$.str = strdup($1.str);
+			$$.arr = false;
 		}
                 ;
 
 rel_exp_not:	exp comp exp {//printf("rel_exp_not -> exp comp exp\n");
 			string dest = newtemp();
 			stringstream ss;
+			string str1 = $1.str, str2 = $3.str;
 			ss << $1.code << $3.code;
-			ss << $2.oper << " " << dest << ", " << $1.str << ", " << $3.str << endl;
+			if($1.arr) {
+				str1 = newtemp();
+				ss << "=[] " << str1 << ", " << $1.str << ", " << $1.index << endl;
+			}
+			if($3.arr) {
+				str2 = newtemp();
+				ss << "=[] " << str2 << ", " << $3.str << ", " << $3.index << endl;
+			}
+			ss << $2.oper << " " << dest << ", " << str1 << ", " << str2 << endl;
 			$$.code = strdup(ss.str().c_str());
 			$$.str = strdup(dest.c_str());
 		}
@@ -460,31 +486,48 @@ comp:            EQUAL { //printf("comp -> EQUAL\n");
 		;
 
 exp:		multipl_expr exp_loop {//printf("exp -> multipl_expr exp_loop\n");
-				stringstream ss, sstr;
-				ss << $1.code;
+			stringstream ss;
+			ss << $1.code;
 
-				if($2.oper) {				
-                                	string dest = newtemp();
-					ss << $2.oper << " " << dest << ", " << $1.str << ", " << $2.str << endl;
-					$$.str = strdup(dest.c_str());
-				} else {
-					$$.str = strdup($1.str);
+			if($2.oper) {
+				string src1 = $1.str, src2 = $2.str;
+				if($1.arr) {
+					src1 = newtemp();
+					ss << "=[] " << src1 << ", " << $1.str << ", " << $1.index << endl;;
 				}
+				if($2.arr) {
+					src2 = newtemp();
+					ss << "=[] " << src2 << ", " << $2.str << ", " << $2.index << endl;
+				}
+                               	string dest = newtemp();
+				ss << $2.oper << " " << dest << ", " << src1 << ", " << src2 << endl;
+				$$.str = strdup(dest.c_str());
+				$$.arr = false;
+			} else {
+				$$.str = strdup($1.str);
+				$$.arr = $1.arr;
+				if($1.arr) $$.index = $1.index;
+			}
 
-				$$.code = strdup(ss.str().c_str());
-			};
+			$$.code = strdup(ss.str().c_str());
+		};
 
 exp_loop:	/*empty*/ {//printf("exp_loop -> epsilon\n");
 			$$.str = strdup("");
 			$$.oper = NULL;
+			$$.arr = false;
 		}
 		| PLUS exp {/*printf("exp_loop -> PLUS exp\n");*/
-				$$.str = strdup($2.str);
-				$$.oper = strdup("+");
-			}
+			$$.str = strdup($2.str);
+			$$.oper = strdup("+");
+			$$.arr = $2.arr;
+			if($2.arr) $$.index = $2.index;
+		}
 		| MINUS exp { //printf("exp_loop -> MINUS exp\n");
 			$$.str = strdup($2.str);
 			$$.oper = strdup("-");
+			$$.arr = $2.arr;
+			if($2.arr) $$.index = $2.index;
 		}
 		;
 
@@ -492,76 +535,107 @@ multipl_expr:	term multipl_loop {//printf("multiple_expr -> term multipl_loop\n"
 			stringstream ss;
 
 			if($2.oper) {
+				string src1 = $1.str, src2 = $2.str;
+				if($1.arr) {
+					src1 = newtemp();
+					ss << "=[] " << src1 << ", " << $1.str << ", " << $1.index << endl;
+				}
+				if($2.arr) {
+					src2 = newtemp();
+					ss << "=[] " << src2 << ", " << $2.str << ", " << $2.index << endl;
+				}
                                 string dest = newtemp();
 				ss << $1.code << $2.code;
-				ss << $2.oper << " " << dest << ", " << $1.str << ", " << $2.str << endl;
+				ss << $2.oper << " " << dest << ", " << src1 << ", " << src2 << endl;
 				$$.code = strdup(ss.str().c_str());
 
 				$$.str = strdup(dest.c_str());
-				//cout << $$.code;
 			} else {
 				$$.str = strdup($1.str);
 				$$.code = strdup($1.code);
+				$$.arr = $1.arr;
+				if($1.arr) $$.index = $1.index;
 			}
 		};
 
 multipl_loop:	/*empty*/ { //printf("multipl_loop -> epsilon\n");
 			$$.str = strdup("");
 			$$.oper = NULL;
+			$$.arr = false;
 		} 
 		| MULT term { //printf("multipl_loop -> MULT term\n");
 			$$.oper = strdup("*");
 			$$.str = strdup($2.str);
 			$$.code = strdup($2.code);
+			$$.arr = $2.arr;
+			if($2.arr) $$.index = $2.index;
 		} 
 		| DIV term { //printf("multipl_loop -> DIV term\n");
 			$$.oper = strdup("/");
 			$$.str = strdup($2.str);
 			$$.code = strdup($2.code);
+			$$.arr = $2.arr;
+			if($2.arr) $$.index = $2.index;
 		}
 		| MOD term { //printf("multipl_loop -> MOD term\n");
 			$$.oper = strdup("%");
 			$$.str = strdup($2.str);
 			$$.code = strdup($2.code);
+			$$.arr = $2.arr;
+			if($2.arr) $2.index = $2.index;
 		}
 		;
 
 term:		term_minus { //printf("term -> term_minus\n");
 			$$.str = strdup($1.str);
 			$$.code = strdup($1.code);
+			$$.arr = $1.arr;
+			if($1.arr) $$.index = $1.index;
 		} 
 		| MINUS term_minus { //printf("term -> MINUS term_minus\n");
 			$$.str = strdup($2.str);
 			$$.code = strdup($2.code);
+			$$.arr = $2.arr;
+			if($2.arr) $$.index = $2.index;
 		}
 		| IDENTIFIER L_PAREN term_exp R_PAREN { //printf("term -> IDENTIFIER L_PAREN term_exp R_PAREN\n");
 			$$.str = strdup($3.str);
 			$$.code = strdup($3.code);
+			$$.arr = $3.arr;
+			if($3.arr) $$.index = $3.index;
 		}
 		;
 
 term_minus:	var {//printf("term_minus -> var\n");
 			$$.str = strdup($1.str);
 			$$.code = strdup($1.code);
+			$$.arr = $1.arr;
+			if($1.arr) $$.index = $1.index;
 		}
 		| NUMBER { //printf("term_minus -> NUMBER\n");
 			string temp = newtemp();
 			$$.str = strdup(temp.c_str());
 			$$.code = strdup("");
+			$$.arr = false;
 		}
 		| L_PAREN exp R_PAREN {//printf("term_minus -> L_PAREN exp R_PAREN\n");
 			$$.str = strdup($2.str);
 			$$.code = strdup($2.code);
+			$$.arr = $2.arr;
+			if($2.arr) $$.index = $2.index;
 		}
 		;
 
 term_exp:	/*empty*/ { //printf("term_exp -> epsilon\n");
 			$$.str = strdup("");
 			$$.code = strdup("");
+			$$.arr = false;
 		}
 		| exp { //printf("term_exp -> exp\n");
 			$$.str = strdup($1.str);
 			$$.code = strdup($1.code);
+			$$.arr = $1.arr;
+			if($1.arr) $$.index = $1.index;
 		} 
 		| exp COMMA term_exp { //printf("term_exp -> exp COMMA term_exp\n");
 			stringstream ss, sscode;
@@ -569,19 +643,20 @@ term_exp:	/*empty*/ { //printf("term_exp -> epsilon\n");
 			$$.str = strdup(ss.str().c_str());
 			sscode << $1.code << $3.code;
 			$$.code = strdup(sscode.str().c_str());
-			cout << $$.str;
+			$$.arr = false;
 		} 
 		;
 
 var:		IDENTIFIER { //printf("var -> IDENTIFIER %s\n", $1);
 			$$.str = strdup($1);
 			$$.code = strdup("");
+			$$.arr = false;
 		} 
 		| IDENTIFIER LSQBRACKET exp RSQBRACKET {// printf("var -> IDENTIFIER LSQBRACKET exp RSQBRACKET\n");
-			string temp = newtemp();
-			$$.str = strdup(temp.c_str());
+			$$.str = strdup($1);
 			$$.index = strdup($3.str);
 			$$.code = strdup($3.code);
+			$$.arr = true;
 		}  
 		;
 
