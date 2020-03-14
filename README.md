@@ -4,7 +4,6 @@ Melanie Henneessee </br>
 
 ***mil code is generated and output to a file called output.mil
 
-
 ## Working Features
 1. Declarations (scalar and array)
 2. Input/output statements
@@ -19,11 +18,11 @@ Melanie Henneessee </br>
 11. Do while
 12. For loop
 13. Return
+14. Assign
 
 
 ## Not implemented features
-1. Assign 
-
+Nothing else as far as I know. We have everything IMPLEMENTED, but cannot run the run_mil command with our output to fully test the program functionality. 
 
 ## Flex commands:  
 flex -o lexer.c lexer.lex <br/>
